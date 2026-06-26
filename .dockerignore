@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-server
+data
+.azure
+.git
+.DS_Store
+.env
+*.log
+*.local
+npm-debug.log*

@@ -1,0 +1,15 @@
+services:
+  quiz-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-change-me}
+      DATABASE_PATH: /app/data/quiz.sqlite
+      PORT: 3000
+    volumes:
+      - quiz-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  quiz-data:

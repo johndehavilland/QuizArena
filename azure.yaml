@@ -1,0 +1,13 @@
+name: quiz-app
+metadata:
+  template: quiz-app-azd
+
+services:
+  web:
+    project: .
+    host: containerapp
+    language: js
+    docker:
+      path: Dockerfile
+      context: .
+      remoteBuild: true

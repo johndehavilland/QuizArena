@@ -1,0 +1,278 @@
+.app-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr minmax(220px, 320px);
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 24px;
+}
+
+.hero-copy {
+  max-width: 680px;
+  color: var(--muted);
+  font-size: 20px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.stat-card,
+.panel,
+.question-card,
+.quiz-summary,
+.result-card {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+.stat-card {
+  background: linear-gradient(135deg, var(--accent), #7c3aed);
+  color: white;
+  display: grid;
+  gap: 6px;
+  padding: 28px;
+}
+
+.stat-card strong {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.stat-card span {
+  margin-bottom: 12px;
+  opacity: 0.82;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.workspace-single {
+  grid-template-columns: 1fr;
+}
+
+.panel {
+  background: var(--panel);
+  padding: 24px;
+  text-align: left;
+}
+
+.full-width {
+  margin-top: 24px;
+}
+
+.panel-heading {
+  margin-bottom: 20px;
+}
+
+.stack {
+  display: grid;
+  gap: 18px;
+}
+
+.admin-gate {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  margin-bottom: 16px;
+  padding: 14px;
+}
+
+label,
+legend {
+  color: var(--heading);
+  font-weight: 700;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--input-bg);
+  color: var(--heading);
+  font: inherit;
+  margin-top: 8px;
+  padding: 12px 14px;
+}
+
+input[type='radio'] {
+  width: auto;
+  accent-color: var(--accent);
+  margin: 0;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+  padding: 12px 18px;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.secondary-button {
+  background: var(--soft-accent);
+  color: var(--accent);
+}
+
+.danger-button {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.hero-actions {
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.live-controls {
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+
+.live-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.live-status-grid span,
+.timer-pill {
+  border-radius: 999px;
+  background: var(--soft-accent);
+  color: var(--heading);
+  font-weight: 800;
+  padding: 8px 12px;
+}
+
+.active-question h3 {
+  margin-top: 16px;
+}
+
+.timer-pill {
+  display: inline-flex;
+}
+
+.question-card {
+  background: var(--card);
+  padding: 18px;
+}
+
+.question-card legend {
+  padding: 0 8px;
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.answer-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.option-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.option-list label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.quiz-summary,
+.result-card {
+  background: var(--card);
+  padding: 16px;
+}
+
+.quiz-summary h3 {
+  margin-top: 0;
+}
+
+.quiz-summary span,
+.result-card span {
+  color: var(--muted);
+}
+
+.status-message {
+  border-radius: 16px;
+  background: var(--soft-accent);
+  color: var(--heading);
+  padding: 12px 14px;
+}
+
+.results-list,
+.quiz-library {
+  display: grid;
+  gap: 12px;
+}
+
+.result-card {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.result-card div {
+  display: grid;
+}
+
+@media (max-width: 860px) {
+  .hero,
+  .workspace,
+  .answers-grid,
+  .live-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell {
+    padding: 24px 0;
+  }
+}

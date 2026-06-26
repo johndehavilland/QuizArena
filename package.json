@@ -1,0 +1,33 @@
+{
+  "name": "quiz-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "client:dev": "vite --host 0.0.0.0",
+    "server:dev": "tsx watch server/index.ts",
+    "dev": "concurrently \"npm:server:dev\" \"npm:client:dev\"",
+    "server:build": "tsc -p tsconfig.server.json",
+    "build": "tsc -b && vite build && npm run server:build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "start": "node --disable-warning=ExperimentalWarning dist-server/index.js"
+  },
+  "dependencies": {
+    "pg": "^8.16.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.2",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "concurrently": "^10.0.3",
+    "oxlint": "^1.69.0",
+    "tsx": "^4.22.4",
+    "typescript": "~6.0.2",
+    "vite": "^8.1.0"
+  }
+}
