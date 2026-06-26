@@ -17,6 +17,7 @@ var managedEnvironmentName = 'cae-${name}'
 var logAnalyticsWorkspaceName = 'log-${name}'
 var applicationInsightsName = 'appi-${name}'
 var containerRegistryName = 'cr${uniqueToken}'
+var containerAppIdentityName = 'id-${name}'
 var storageAccountName = 'st${uniqueToken}'
 var fileShareName = 'quiz-data'
 var environmentStorageName = 'quiz-data'
@@ -57,6 +58,12 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-07-01' =
   properties: {
     adminUserEnabled: false
   }
+}
+
+resource containerAppIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: containerAppIdentityName
+  location: location
+  tags: tags
 }
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -124,8 +131,14 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     'azd-service-name': serviceName
   })
   identity: {
-    type: 'SystemAssigned'
+    type: 'SystemAssigned,UserAssigned'
+    userAssignedIdentities: {
+      '${containerAppIdentity.id}': {}
+    }
   }
+  dependsOn: [
+    acrPullRoleAssignment
+  ]
   properties: {
     managedEnvironmentId: containerAppsEnvironment.id
     configuration: {
@@ -133,7 +146,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
       registries: [
         {
           server: containerRegistry.properties.loginServer
-          identity: 'system'
+          identity: containerAppIdentity.id
         }
       ]
       ingress: {
@@ -249,14 +262,14 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
 }
 
 resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(containerRegistry.id, containerApp.name, 'acrpull')
+  name: guid(containerRegistry.id, containerAppIdentity.id, 'acrpull')
   scope: containerRegistry
   properties: {
     roleDefinitionId: subscriptionResourceId(
       'Microsoft.Authorization/roleDefinitions',
       '7f951dda-4ed3-4680-a7ca-43fe172d538d'
     )
-    principalId: containerApp.identity.principalId
+    principalId: containerAppIdentity.properties.principalId
     principalType: 'ServicePrincipal'
   }
 }
