@@ -69,7 +69,7 @@ azd version
    azd env set DATABASE_URL "postgres://user:password@host:5432/database?sslmode=require"
    ```
 
-   If `DATABASE_URL` is not set, the Azure deployment uses SQLite stored on an Azure Files share and runs one Container Apps replica.
+   If `DATABASE_URL` is not set, the Azure deployment uses SQLite on the container filesystem and runs one Container Apps replica. This is suitable for demos, but data can be lost when the container is replaced. Use PostgreSQL for durable Azure hosting.
 
 ### Migrate existing SQLite data to PostgreSQL
 

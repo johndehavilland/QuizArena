@@ -12,7 +12,7 @@ param adminPassword string
 @secure()
 param databaseUrl string = ''
 
-param sqliteUseAzureFiles bool = true
+param sqliteUseAzureFiles bool = false
 
 var normalizedEnvironmentName = toLower(replace(environmentName, '_', '-'))
 var tags = {

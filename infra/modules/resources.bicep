@@ -10,7 +10,7 @@ param adminPassword string
 @secure()
 param databaseUrl string = ''
 
-param sqliteUseAzureFiles bool = true
+param sqliteUseAzureFiles bool = false
 
 var serviceName = 'web'
 var uniqueToken = take(uniqueString(subscription().id, resourceGroup().id, name), 12)
@@ -117,6 +117,9 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
 resource containerAppsStorage 'Microsoft.App/managedEnvironments/storages@2024-03-01' = if (useAzureFilesForSqlite) {
   parent: containerAppsEnvironment
   name: environmentStorageName
+  dependsOn: [
+    fileShare
+  ]
   properties: {
     azureFile: {
       accountName: storageAccount!.name
