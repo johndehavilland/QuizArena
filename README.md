@@ -4,6 +4,9 @@ Compete live. Climb the leaderboard.
 
 A live quiz platform with an admin screen for publishing quizzes and controlling live sessions, plus a player screen for joining and answering questions with a leaderboard at the end and support for 100+ concurrent users. 
 
+![QuizArena info graphic](quiz-arena.png)
+
+
 ## Get it going
 
 The easiest way to get this up and running to use is in Azure. This repo includes Azure Developer CLI (`azd`) configuration for Azure Container Apps in `azure.yaml` and `infra/`. 

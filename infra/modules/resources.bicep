@@ -66,7 +66,7 @@ resource containerAppIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
   tags: tags
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = if (!usePostgres) {
   name: storageAccountName
   location: location
   tags: tags
@@ -83,12 +83,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2023-05-01' = {
+resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2023-05-01' = if (!usePostgres) {
   parent: storageAccount
   name: 'default'
 }
 
-resource fileShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
+resource fileShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = if (!usePostgres) {
   parent: fileService
   name: fileShareName
   properties: {
@@ -111,14 +111,14 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
   }
 }
 
-resource containerAppsStorage 'Microsoft.App/managedEnvironments/storages@2024-03-01' = {
+resource containerAppsStorage 'Microsoft.App/managedEnvironments/storages@2024-03-01' = if (!usePostgres) {
   parent: containerAppsEnvironment
   name: environmentStorageName
   properties: {
     azureFile: {
-      accountName: storageAccount.name
-      accountKey: storageAccount.listKeys().keys[0].value
-      shareName: fileShare.name
+      accountName: storageAccount!.name
+      accountKey: storageAccount!.listKeys().keys[0].value
+      shareName: fileShare!.name
       accessMode: 'ReadWrite'
     }
   }
@@ -201,10 +201,6 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
               value: '3000'
             }
             {
-              name: 'DATABASE_PATH'
-              value: '${sqliteDataPath}/quiz.sqlite'
-            }
-            {
               name: 'ADMIN_PASSWORD'
               secretRef: 'admin-password'
             }
@@ -212,18 +208,23 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
               name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
               secretRef: 'applicationinsights-connection-string'
             }
-          ], usePostgres ? [
+          ], concat(usePostgres ? [
             {
               name: 'DATABASE_URL'
               secretRef: 'database-url'
             }
-          ] : [])
-          volumeMounts: [
+          ] : [], !usePostgres ? [
+            {
+              name: 'DATABASE_PATH'
+              value: '${sqliteDataPath}/quiz.sqlite'
+            }
+          ] : []))
+          volumeMounts: !usePostgres ? [
             {
               volumeName: environmentStorageName
               mountPath: sqliteDataPath
             }
-          ]
+          ] : []
           probes: [
             {
               type: 'Liveness'
@@ -250,13 +251,13 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           }
         }
       ]
-      volumes: [
+      volumes: !usePostgres ? [
         {
           name: environmentStorageName
           storageType: 'AzureFile'
           storageName: containerAppsStorage.name
         }
-      ]
+      ] : []
     }
   }
 }
