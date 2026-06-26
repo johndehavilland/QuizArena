@@ -12,7 +12,7 @@ param databaseUrl string = ''
 
 var serviceName = 'web'
 var uniqueToken = take(uniqueString(subscription().id, resourceGroup().id, name), 12)
-var containerAppName = 'ca-${name}'
+var containerAppName = 'ca-${take(name, 20)}-${take(uniqueToken, 6)}'
 var managedEnvironmentName = 'cae-${name}'
 var logAnalyticsWorkspaceName = 'log-${name}'
 var applicationInsightsName = 'appi-${name}'
