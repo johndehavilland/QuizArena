@@ -12,6 +12,8 @@ param adminPassword string
 @secure()
 param databaseUrl string = ''
 
+param sqliteUseAzureFiles bool = true
+
 var normalizedEnvironmentName = toLower(replace(environmentName, '_', '-'))
 var tags = {
   'azd-env-name': environmentName
@@ -29,6 +31,7 @@ module resources './modules/resources.bicep' = {
   params: {
     adminPassword: adminPassword
     databaseUrl: databaseUrl
+    sqliteUseAzureFiles: sqliteUseAzureFiles
     name: normalizedEnvironmentName
     location: location
     tags: tags

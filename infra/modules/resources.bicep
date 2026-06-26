@@ -10,6 +10,8 @@ param adminPassword string
 @secure()
 param databaseUrl string = ''
 
+param sqliteUseAzureFiles bool = true
+
 var serviceName = 'web'
 var uniqueToken = take(uniqueString(subscription().id, resourceGroup().id, name), 12)
 var containerAppName = 'ca-${take(name, 20)}-${take(uniqueToken, 6)}'
@@ -23,6 +25,7 @@ var fileShareName = 'quiz-data'
 var environmentStorageName = 'quiz-data'
 var sqliteDataPath = '/app/data'
 var usePostgres = !empty(databaseUrl)
+var useAzureFilesForSqlite = !usePostgres && sqliteUseAzureFiles
 var placeholderImage = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
@@ -66,7 +69,7 @@ resource containerAppIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@
   tags: tags
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = if (!usePostgres) {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = if (useAzureFilesForSqlite) {
   name: storageAccountName
   location: location
   tags: tags
@@ -83,12 +86,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = if (!us
   }
 }
 
-resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2023-05-01' = if (!usePostgres) {
+resource fileService 'Microsoft.Storage/storageAccounts/fileServices@2023-05-01' = if (useAzureFilesForSqlite) {
   parent: storageAccount
   name: 'default'
 }
 
-resource fileShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = if (!usePostgres) {
+resource fileShare 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = if (useAzureFilesForSqlite) {
   parent: fileService
   name: fileShareName
   properties: {
@@ -111,14 +114,14 @@ resource containerAppsEnvironment 'Microsoft.App/managedEnvironments@2024-03-01'
   }
 }
 
-resource containerAppsStorage 'Microsoft.App/managedEnvironments/storages@2024-03-01' = if (!usePostgres) {
+resource containerAppsStorage 'Microsoft.App/managedEnvironments/storages@2024-03-01' = if (useAzureFilesForSqlite) {
   parent: containerAppsEnvironment
   name: environmentStorageName
   properties: {
     azureFile: {
       accountName: storageAccount!.name
       accountKey: storageAccount!.listKeys().keys[0].value
-      shareName: fileShare!.name
+      shareName: fileShareName
       accessMode: 'ReadWrite'
     }
   }
@@ -219,7 +222,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
               value: '${sqliteDataPath}/quiz.sqlite'
             }
           ] : []))
-          volumeMounts: !usePostgres ? [
+          volumeMounts: useAzureFilesForSqlite ? [
             {
               volumeName: environmentStorageName
               mountPath: sqliteDataPath
@@ -251,7 +254,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
           }
         }
       ]
-      volumes: !usePostgres ? [
+      volumes: useAzureFilesForSqlite ? [
         {
           name: environmentStorageName
           storageType: 'AzureFile'
